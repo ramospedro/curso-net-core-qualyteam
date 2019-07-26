@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CursoNetCoreQualyteam.Dominio;
 using CursoNetCoreQualyteam.Infraestrutura;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -47,9 +48,15 @@ namespace CursoNetCoreQualyteam.Web
         }
 
         [HttpPost]
-        public async Task<ActionResult<ReceitaViewModel>> InsertAsync([FromBody] ReceitaViewModel receita)
+        public async Task<ActionResult<ReceitaViewModel>> InsertAsync([FromBody] ReceitaViewModel receitaPayload)
         {
-            return null;
+            var receita = 
+                new Receita(receitaPayload.Title, receitaPayload.Description, receitaPayload.Ingredients, receitaPayload.Preparation, receitaPayload.ImageUrl);
+            
+            _context.Add(receita);
+            await _context.SaveChangesAsync();
+            return new ReceitaViewModel(
+                        receita.Id, receita.Titulo, receita.Descricao, receita.Ingredientes, receita.Preparacao, receita.UrlDaImagem);
         }
     }
 

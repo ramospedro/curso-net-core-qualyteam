@@ -88,11 +88,15 @@ namespace CursoNetCoreQualyteam.Controllers.Tests
 
             var controller = new ReceitasController(context);
             var receitaInserida = await controller.InsertAsync(receitaParaInserir);
-            context
-                .Receitas
-                .FirstOrDefault(r => r.Id == receitaInserida.Value.Id)
-                .Should()
-                .BeEquivalentTo(receitaParaInserir, c => c.Excluding(r => r.Id));
+            
+            var receitaDoBanco = context
+                                    .Receitas
+                                    .FirstOrDefault(r => r.Id == receitaInserida.Value.Id);
+                                    
+            receitaDoBanco.Should().NotBeNull();
+            receitaDoBanco.Id.Should().NotBeEmpty();
+            receitaDoBanco.Titulo.Should().Be(receitaParaInserir.Title);
+                                    
         }
     }
 }
