@@ -28,7 +28,7 @@ namespace CursoNetCoreQualyteam.Web
                     .ToArrayAsync();
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet("{id:guid}")]
         public async Task<ActionResult<ReceitaViewModel>> GetOneAsync(Guid id)
         {
             return await _context
