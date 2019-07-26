@@ -22,17 +22,19 @@ namespace CursoNetCoreQualyteam.Web
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ReceitaViewModel>>> GetAllAsync()
         {
-            var todasAsReceitas = await _context.Receitas.ToArrayAsync();
-
-            return todasAsReceitas
+            return await _context
+                    .Receitas
                     .Select(r => new ReceitaViewModel(r.Id, r.Titulo, r.Descricao, r.Ingredientes, r.Preparacao, r.UrlDaImagem))
-                    .ToArray();
+                    .ToArrayAsync();
         }
 
         [HttpGet("{id:int}")]
         public async Task<ActionResult<ReceitaViewModel>> GetOneAsync(Guid id)
         {
-            return null;
+            return await _context
+                .Receitas
+                .Select(r => new ReceitaViewModel(r.Id, r.Titulo, r.Descricao, r.Ingredientes, r.Preparacao, r.UrlDaImagem))
+                .FirstOrDefaultAsync(r => r.Id == id);
         }
     }
 
