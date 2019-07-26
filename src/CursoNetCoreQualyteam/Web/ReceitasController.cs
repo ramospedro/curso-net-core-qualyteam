@@ -45,6 +45,12 @@ namespace CursoNetCoreQualyteam.Web
             await _context.SaveChangesAsync();
             return new OkResult();
         }
+
+        [HttpPost]
+        public async Task<ActionResult<ReceitaViewModel>> InsertAsync([FromBody] ReceitaViewModel receita)
+        {
+            return null;
+        }
     }
 
     public class ReceitaViewModel

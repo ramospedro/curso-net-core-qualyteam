@@ -79,5 +79,20 @@ namespace CursoNetCoreQualyteam.Controllers.Tests
             idsReceitas.Should().NotContain(arrozComFeijao.Id);
             
         }
+
+        [Fact]
+        public async void InsertAsync_DeveInserirAReceitaSolicitada()
+        {
+            var receitaParaInserir = new ReceitaViewModel(Guid.Empty, "lasanha", "bastante carboidrato", "massa, queijo", "assar", "rec.com/las");
+            var context = CreateTestContext();
+
+            var controller = new ReceitasController(context);
+            var receitaInserida = await controller.InsertAsync(receitaParaInserir);
+            context
+                .Receitas
+                .FirstOrDefault(r => r.Id == receitaInserida.Value.Id)
+                .Should()
+                .BeEquivalentTo(receitaParaInserir, c => c.Excluding(r => r.Id));
+        }
     }
 }
