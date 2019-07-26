@@ -40,6 +40,9 @@ namespace CursoNetCoreQualyteam.Web
         [HttpDelete("{id:guid}")]
         public async Task<ActionResult> DeleteOneAsync(Guid id)
         {
+            var receita = await _context.Receitas.FindAsync(id);
+            _context.Remove(receita);
+            await _context.SaveChangesAsync();
             return NoContent();
         }
     }
