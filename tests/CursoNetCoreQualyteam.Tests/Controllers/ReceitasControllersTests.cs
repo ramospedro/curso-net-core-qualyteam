@@ -1,6 +1,10 @@
 using System;
 using Xunit;
 using FluentAssertions;
+using CursoNetCoreQualyteam.Web;
+using CursoNetCoreQualyteam.Infraestrutura;
+using Microsoft.EntityFrameworkCore;
+using CursoNetCoreQualyteam.Dominio;
 
 namespace CursoNetCoreQualyteam.Controllers.Tests
 {
@@ -9,30 +13,24 @@ namespace CursoNetCoreQualyteam.Controllers.Tests
         [Fact]
         public async void GetAll_DeveResponderComTodasAsReceitasCadastradas()
         {
-            // insere receitas
+            var options = new DbContextOptionsBuilder<ReceitasContext>()
+                     .UseInMemoryDatabase("database")
+                     .Options;
+            var context = new ReceitasContext(options);
+            context.AddRange(
+                new Receita(1, "Feijão com Arroz", "Um belo prato de feijão com arroz.", "Feijão, Arroz", "Misture.", "rec.com/fjar"),
+                new Receita(2, "Batatas Fritas", "Uma porção de batata", "Batata, Óleo, Sal", "Frite a bata", "rec.com/btfr"));
+            await context.SaveChangesAsync();
 
-            var controller = new ReceitasController();
+            var controller = new ReceitasController(context);
             var receitas = await controller.GetAllAsync();
+
+            receitas.Value.Should().HaveCount(2);
+
             receitas.Value.Should().BeEquivalentTo(new ReceitaViewModel[]
             {
-                new ReceitaViewModel()
-                {
-                    Id = 1,
-                    Title = "Feijão com Arroz",
-                    Description = "Um belo prato de feijão com arroz que alimenta todo bom brasieiro.",
-                    Ingredients = "Feijão, Arroz",
-                    Preparation = "Misture o feijão com o arroz e pronto.",
-                    ImageUrl = "fakeurl.com/feijaocomarroz"
-                },
-                new ReceitaViewModel()
-                {
-                    Id = 2,
-                    Title = "Batatas Fritas",
-                    Description = "Uma porção de bata melhor que a do Mc Donalds.",
-                    Ingredients = "Batata, Óleo, Sal",
-                    Preparation = "Frite a bata no óleo e adicione sal.",
-                    ImageUrl = "fakeurl.com/batatasfritas"
-                }
+                new ReceitaViewModel(1, "Feijão com Arroz", "Um belo prato de feijão com arroz.", "Feijão, Arroz", "Misture.", "rec.com/fjar"),
+                new ReceitaViewModel(2, "Batatas Fritas", "Uma porção de batata", "Batata, Óleo, Sal", "Frite a bata", "rec.com/btfr")
             });
         }
     }

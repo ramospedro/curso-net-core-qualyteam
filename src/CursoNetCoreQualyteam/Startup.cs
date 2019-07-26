@@ -10,6 +10,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore;
+using CursoNetCoreQualyteam.Infraestrutura;
 
 namespace CursoNetCoreQualyteam
 {
@@ -26,6 +28,11 @@ namespace CursoNetCoreQualyteam
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.AddEntityFrameworkSqlServer()
+                .AddDbContext<ReceitasContext>(
+                    options => options.UseSqlServer(
+                        Configuration.GetConnectionString("Database")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -39,6 +46,12 @@ namespace CursoNetCoreQualyteam
             {
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
+            }
+
+            using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
+            {
+                serviceScope.ServiceProvider.GetService<ReceitasContext>()
+                    .Database.Migrate();
             }
 
             app.UseCors(builder => builder.AllowAnyOrigin());
