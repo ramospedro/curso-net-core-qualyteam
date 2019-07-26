@@ -58,6 +58,23 @@ namespace CursoNetCoreQualyteam.Web
             return new ReceitaViewModel(
                         receita.Id, receita.Titulo, receita.Descricao, receita.Ingredientes, receita.Preparacao, receita.UrlDaImagem);
         }
+
+        [HttpPut("{id:guid}")]
+        public async Task<ActionResult> UpdateAsync(Guid id, [FromBody] ReceitaViewModel receitaPayload)
+        {
+            var receita =
+                new Receita(receitaPayload.Title, receitaPayload.Description, receitaPayload.Ingredients, receitaPayload.Preparation, receitaPayload.ImageUrl);
+            
+            var receitaParaAlterar = await _context.Receitas.FindAsync(id);
+            receitaParaAlterar.Titulo = receitaPayload.Title;
+            receitaParaAlterar.Descricao = receitaPayload.Description;
+            receitaParaAlterar.Ingredientes = receitaPayload.Ingredients;
+            receitaParaAlterar.Preparacao = receitaPayload.Preparation;
+            receitaParaAlterar.UrlDaImagem = receitaPayload.ImageUrl;
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 
     public class ReceitaViewModel

@@ -92,11 +92,32 @@ namespace CursoNetCoreQualyteam.Controllers.Tests
             var receitaDoBanco = context
                                     .Receitas
                                     .FirstOrDefault(r => r.Id == receitaInserida.Value.Id);
-                                    
+
             receitaDoBanco.Should().NotBeNull();
             receitaDoBanco.Id.Should().NotBeEmpty();
-            receitaDoBanco.Titulo.Should().Be(receitaParaInserir.Title);
-                                    
+            receitaDoBanco.Titulo.Should().Be(receitaParaInserir.Title);                   
+        }
+
+        [Fact]
+        public async void UpdateAsync_DeveAtualizarAReceitaInserida()
+        {
+            var arrozPuro = new Receita("arroz", "branco", "só arroz", "cozinhar", "rec.com/arz");
+
+            var context = CreateTestContext();
+            context.Add(arrozPuro);
+            await context.SaveChangesAsync();
+
+            var controller = new ReceitasController(context);
+
+            var arrozComFeijao =
+                new ReceitaViewModel(
+                    arrozPuro.Id, "arroz com feijão", "arroz branco e feijão preto", "só arroz e feijão", "cozinhar e misturar", "rec.com/aef");
+            await controller.UpdateAsync(arrozComFeijao);
+
+            context.Receitas
+                .FirstOrDefault(r => r.Id == arrozComFeijao.Id)
+                .Titulo.Should().Be(arrozComFeijao.Title);
+
         }
     }
 }
