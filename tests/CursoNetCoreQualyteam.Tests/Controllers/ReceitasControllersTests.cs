@@ -10,16 +10,22 @@ namespace CursoNetCoreQualyteam.Controllers.Tests
 {
     public class ReceitasControllersTests
     {
-        [Fact]
-        public async void GetAll_DeveResponderComTodasAsReceitasCadastradas()
+        private ReceitasContext CreateTestContext()
         {
             var options = new DbContextOptionsBuilder<ReceitasContext>()
                      .UseInMemoryDatabase("database")
                      .Options;
-            var context = new ReceitasContext(options);
-            context.AddRange(
-                new Receita(1, "Feijão com Arroz", "Um belo prato de feijão com arroz.", "Feijão, Arroz", "Misture.", "rec.com/fjar"),
-                new Receita(2, "Batatas Fritas", "Uma porção de batata", "Batata, Óleo, Sal", "Frite a bata", "rec.com/btfr"));
+            return new ReceitasContext(options);
+        }
+
+        [Fact]
+        public async void GetAll_DeveResponderComTodasAsReceitasCadastradas()
+        {
+            var arrozComFeijao = new Receita("Feijão com Arroz", "Um belo prato de feijão com arroz.", "Feijão, Arroz", "Misture.", "rec.com/fjar");
+            var batataFrita = new Receita("Batatas Fritas", "Uma porção de batata", "Batata, Óleo, Sal", "Frite a bata", "rec.com/btfr");
+
+            var context = CreateTestContext();
+            context.AddRange(arrozComFeijao, batataFrita);
             await context.SaveChangesAsync();
 
             var controller = new ReceitasController(context);
@@ -29,9 +35,30 @@ namespace CursoNetCoreQualyteam.Controllers.Tests
 
             receitas.Value.Should().BeEquivalentTo(new ReceitaViewModel[]
             {
-                new ReceitaViewModel(1, "Feijão com Arroz", "Um belo prato de feijão com arroz.", "Feijão, Arroz", "Misture.", "rec.com/fjar"),
-                new ReceitaViewModel(2, "Batatas Fritas", "Uma porção de batata", "Batata, Óleo, Sal", "Frite a bata", "rec.com/btfr")
+                new ReceitaViewModel(arrozComFeijao.Id, arrozComFeijao.Titulo, arrozComFeijao.Descricao,
+                    arrozComFeijao.Ingredientes, arrozComFeijao.Preparacao, arrozComFeijao.UrlDaImagem),
+                new ReceitaViewModel(batataFrita.Id, batataFrita.Titulo, batataFrita.Descricao,
+                    batataFrita.Ingredientes, batataFrita.Preparacao, batataFrita.UrlDaImagem)
             });
+        }
+
+        [Fact]
+        public async void GetOne_DeveResponderComAReceitaSolicitada()
+        {
+            var arrozComFeijao = new Receita("Feijão com Arroz", "Um belo prato de feijão com arroz.", "Feijão, Arroz", "Misture.", "rec.com/fjar");
+            var batataFrita = new Receita("Batatas Fritas", "Uma porção de batata", "Batata, Óleo, Sal", "Frite a bata", "rec.com/btfr");
+
+            var context = CreateTestContext();
+            context.AddRange(arrozComFeijao, batataFrita);
+            await context.SaveChangesAsync();
+
+            var controller = new ReceitasController(context);
+            var receita = await controller.GetOneAsync(batataFrita.Id);
+
+            receita.Value.Should().BeEquivalentTo(
+                new ReceitaViewModel(batataFrita.Id, batataFrita.Titulo, batataFrita.Descricao,
+                    batataFrita.Ingredientes, batataFrita.Preparacao, batataFrita.UrlDaImagem)
+            );
         }
     }
 }

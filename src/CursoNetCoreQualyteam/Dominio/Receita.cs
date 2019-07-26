@@ -6,9 +6,9 @@ namespace CursoNetCoreQualyteam.Dominio
 {
     public class Receita
     {
-        public Receita(int id, string titulo, string descricao, string ingredientes, string preparacao, string urlDaImagem)
+        public Receita(string titulo, string descricao, string ingredientes, string preparacao, string urlDaImagem)
         {
-            Id = id;
+            Id = Guid.NewGuid();
             Titulo = titulo;
             Descricao = descricao;
             Ingredientes = ingredientes;
@@ -16,7 +16,7 @@ namespace CursoNetCoreQualyteam.Dominio
             UrlDaImagem = urlDaImagem;
         }
 
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string Titulo { get; set; }
         public string Descricao { get; set; }
         public string Ingredientes { get; set; }

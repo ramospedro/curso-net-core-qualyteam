@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -27,11 +28,17 @@ namespace CursoNetCoreQualyteam.Web
                     .Select(r => new ReceitaViewModel(r.Id, r.Titulo, r.Descricao, r.Ingredientes, r.Preparacao, r.UrlDaImagem))
                     .ToArray();
         }
+
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<ReceitaViewModel>> GetOneAsync(Guid id)
+        {
+            return null;
+        }
     }
 
     public class ReceitaViewModel
     {
-        public ReceitaViewModel(int id, string title, string description, string ingredients, string preparation, string imageUrl)
+        public ReceitaViewModel(Guid id, string title, string description, string ingredients, string preparation, string imageUrl)
         {
             Id = id;
             Title = title;
@@ -41,7 +48,7 @@ namespace CursoNetCoreQualyteam.Web
             ImageUrl = imageUrl;
         }
         
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public string Ingredients { get; set; }
