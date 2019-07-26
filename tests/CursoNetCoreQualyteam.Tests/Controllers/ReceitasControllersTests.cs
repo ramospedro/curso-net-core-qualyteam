@@ -5,6 +5,7 @@ using CursoNetCoreQualyteam.Web;
 using CursoNetCoreQualyteam.Infraestrutura;
 using Microsoft.EntityFrameworkCore;
 using CursoNetCoreQualyteam.Dominio;
+using System.Linq;
 
 namespace CursoNetCoreQualyteam.Controllers.Tests
 {
@@ -59,6 +60,24 @@ namespace CursoNetCoreQualyteam.Controllers.Tests
                 new ReceitaViewModel(batataFrita.Id, batataFrita.Titulo, batataFrita.Descricao,
                     batataFrita.Ingredientes, batataFrita.Preparacao, batataFrita.UrlDaImagem)
             );
+        }
+
+        [Fact]
+        public async void DeleteOneAsync_DeveDeletarAReceitaSolicitada()
+        {
+            var arrozComFeijao = new Receita("Feijão com Arroz", "Um belo prato de feijão com arroz.", "Feijão, Arroz", "Misture.", "rec.com/fjar");
+            var batataFrita = new Receita("Batatas Fritas", "Uma porção de batata", "Batata, Óleo, Sal", "Frite a bata", "rec.com/btfr");
+
+            var context = CreateTestContext();
+            context.AddRange(arrozComFeijao, batataFrita);
+            await context.SaveChangesAsync();
+            
+            var controller = new ReceitasController(context);
+            await controller.DeleteOneAsync(arrozComFeijao.Id);
+            
+            var idsReceitas = await context.Receitas.Select(r => r.Id).ToArrayAsync();
+            idsReceitas.Should().NotContain(arrozComFeijao.Id);
+            
         }
     }
 }

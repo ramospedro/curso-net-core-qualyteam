@@ -36,6 +36,12 @@ namespace CursoNetCoreQualyteam.Web
                 .Select(r => new ReceitaViewModel(r.Id, r.Titulo, r.Descricao, r.Ingredientes, r.Preparacao, r.UrlDaImagem))
                 .FirstOrDefaultAsync(r => r.Id == id);
         }
+
+        [HttpDelete("{id:guid}")]
+        public async Task<ActionResult> DeleteOneAsync(Guid id)
+        {
+            return NoContent();
+        }
     }
 
     public class ReceitaViewModel
