@@ -54,8 +54,7 @@ namespace CursoNetCoreQualyteam
                     .Database.Migrate();
             }
 
-            app.UseCors(builder => builder.AllowAnyOrigin());
-            app.UseHttpsRedirection();
+            app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
             app.UseMvc();
         }
     }

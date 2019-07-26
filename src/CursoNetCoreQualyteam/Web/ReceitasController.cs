@@ -43,7 +43,7 @@ namespace CursoNetCoreQualyteam.Web
             var receita = await _context.Receitas.FindAsync(id);
             _context.Remove(receita);
             await _context.SaveChangesAsync();
-            return NoContent();
+            return new OkResult();
         }
     }
 
